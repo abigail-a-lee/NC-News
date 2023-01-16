@@ -1,0 +1,1 @@
+exports.getTopics = require("./topics");
