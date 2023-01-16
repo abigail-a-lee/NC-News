@@ -23,6 +23,14 @@ describe("app", () => {
           expect(topics).toBeInstanceOf(Array);
         });
     });
+    it("responds with an array of topic objects with the correct length", () => {
+      return request(app)
+        .get("/api/topics")
+        .then((res) => {
+          let topics = res.body.topics;
+          expect(topics.length).toBe(3);
+        });
+    });
     it("responds with an array of topic objects with expected properties and values", () => {
       return request(app)
         .get("/api/topics")
