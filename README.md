@@ -2,7 +2,7 @@
 
 ## Setup instructions
 
-### **1.** Create environment variable files .env.test and .env.development in the root directory with the following information:
+### **1.** Create environment variable files `.env.test` and `.env.development` in the root directory with the following information:
 
 **.env.development:**
 
