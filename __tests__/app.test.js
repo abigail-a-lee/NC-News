@@ -8,10 +8,6 @@ beforeEach(() => {
   return seed(testData);
 });
 
-afterEach(() => {
-  jest.restoreAllMocks();
-});
-
 afterAll(() => db.end());
 
 describe("app", () => {
@@ -25,6 +21,14 @@ describe("app", () => {
         .then((res) => {
           let topics = res.body.topics;
           expect(topics).toBeInstanceOf(Array);
+        });
+    });
+    it("responds with an array of topic objects with the correct length", () => {
+      return request(app)
+        .get("/api/topics")
+        .then((res) => {
+          let topics = res.body.topics;
+          expect(topics.length).toBe(3);
         });
     });
     it("responds with an array of topic objects with expected properties and values", () => {
@@ -50,6 +54,7 @@ describe("app", () => {
       return request(app).get("/api/topics").expect(500);
     });
   });
+  
   describe("GET /api/articles", () => {
     it("responds with a status 200", () => {
       return request(app).get("/api/articles").expect(200);
