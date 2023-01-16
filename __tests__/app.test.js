@@ -62,6 +62,14 @@ describe("app", () => {
           expect(articles).toBeInstanceOf(Array);
         });
     });
+    it("responds with an array of article objects with the correct length", () => {
+      return request(app)
+        .get("/api/articles")
+        .then((res) => {
+          let articles = res.body.articles;
+          expect(articles.length).toBe(12);
+        });
+    });
     it("responds with an array of article objects with expected properties and values", () => {
       return request(app)
         .get("/api/articles")
