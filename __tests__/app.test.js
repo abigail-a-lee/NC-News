@@ -8,6 +8,10 @@ beforeEach(() => {
   return seed(testData);
 });
 
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 afterAll(() => db.end());
 
 describe("app", () => {
@@ -54,7 +58,7 @@ describe("app", () => {
       return request(app).get("/api/topics").expect(500);
     });
   });
-  
+
   describe("GET /api/articles", () => {
     it("responds with a status 200", () => {
       return request(app).get("/api/articles").expect(200);
