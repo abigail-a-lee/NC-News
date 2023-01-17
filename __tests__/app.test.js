@@ -16,7 +16,7 @@ afterAll(() => db.end());
 
 describe("app", () => {
   describe("GET /api/topics", () => {
-    it("responds with a status 200", () => {
+    it("responds with a status 200 if successful", () => {
       return request(app).get("/api/topics").expect(200);
     });
     it("responds with an array of topic objects", () => {
@@ -55,12 +55,16 @@ describe("app", () => {
         throw new Error("Mocked database error");
       });
 
-      return request(app).get("/api/topics").expect(500);
+      return Promise.all([request(app).get("/api/topics").expect(500)]).then(
+        ([res1]) => {
+          expect(res1.body).toHaveProperty("message");
+        }
+      );
     });
   });
 
   describe("GET /api/articles", () => {
-    it("responds with a status 200", () => {
+    it("responds with a status 200 if successful", () => {
       return request(app).get("/api/articles").expect(200);
     });
     it("responds with an array of article objects", () => {
@@ -121,7 +125,88 @@ describe("app", () => {
         throw new Error("Mocked database error");
       });
 
-      return request(app).get("/api/articles").expect(500);
+      return Promise.all([request(app).get("/api/articles").expect(500)]).then(
+        ([res1]) => {
+          expect(res1.body).toHaveProperty("message");
+        }
+      );
+    });
+  });
+
+  describe("GET /api/articles/:article_id", () => {
+    it("responds with a status 200 if successful", () => {
+      return request(app).get("/api/articles/1").expect(200);
+    });
+    it("responds with only one article", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((res) => {
+          let article = res.body.article;
+          expect(article.length).toBe(1);
+        });
+    });
+    it("responds with an article object with the correct properties", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((res) => {
+          let article = res.body.article;
+          expect(article).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                body: expect.any(String),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String),
+              }),
+            ])
+          );
+        });
+    });
+    it("handles variety of ids!", () => {
+      return Promise.all([
+        request(app).get("/api/articles/2/").expect(200),
+        request(app).get("/api/articles/12/").expect(200),
+      ]).then(([res1, res2]) => {
+        expect(res1.body.article.length).toBe(1);
+        expect(res2.body.article.length).toBe(1);
+      });
+    });
+    it("responds with an error code of 404 if the article cannot be found", () => {
+      return Promise.all([
+        request(app).get("/api/articles/200").expect(404),
+      ]).then(([res1]) => {
+        expect(res1.body).toHaveProperty("message");
+      });
+    });
+    it("responds with an error code of 400 if the id passed in is invalid", () => {
+      return Promise.all([
+        request(app).get("/api/articles/example").expect(400),
+        request(app).get("/api/articles/example1").expect(400),
+        request(app).get("/api/articles/{}").expect(400),
+        request(app).get("/api/articles/[]").expect(400),
+      ]).then(([res1, res2, res3, res4]) => {
+        expect(res1.body).toHaveProperty("message");
+        expect(res2.body).toHaveProperty("message");
+        expect(res3.body).toHaveProperty("message");
+        expect(res4.body).toHaveProperty("message");
+      });
+    });
+    it("responds with an error code of 500 for all of other errors", () => {
+      jest.spyOn(db, "query").mockImplementation(() => {
+        throw new Error("Mocked database error");
+      });
+
+      return Promise.all([
+        request(app).get("/api/articles/1").expect(500),
+      ]).then(([res1]) => {
+        expect(res1.body).toHaveProperty("message");
+      });
     });
   });
 });
