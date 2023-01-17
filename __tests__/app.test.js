@@ -16,7 +16,7 @@ afterAll(() => db.end());
 
 describe("app", () => {
   describe("GET /api/topics", () => {
-    it("responds with a status 200", () => {
+    it("responds with a status 200 if successful", () => {
       return request(app).get("/api/topics").expect(200);
     });
     it("responds with an array of topic objects", () => {
@@ -60,7 +60,7 @@ describe("app", () => {
   });
 
   describe("GET /api/articles", () => {
-    it("responds with a status 200", () => {
+    it("responds with a status 200 if successful", () => {
       return request(app).get("/api/articles").expect(200);
     });
     it("responds with an array of article objects", () => {
@@ -117,6 +117,75 @@ describe("app", () => {
         });
     });
     it("responds with a status 500 when an issue occurs", () => {
+      jest.spyOn(db, "query").mockImplementation(() => {
+        throw new Error("Mocked database error");
+      });
+
+      return request(app).get("/api/articles").expect(500);
+    });
+  });
+
+  describe("GET /api/articles/:article_id", () => {
+    it("responds with a status 200 if successful", () => {
+      return request(app).get("/api/articles/1").expect(200);
+    });
+    it("responds with only one article", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((res) => {
+          let article = res.body.article;
+          expect(article.length).toBe(1);
+        });
+    });
+    it("responds with an article object with the correct properties", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((res) => {
+          let article = res.body.article;
+          expect(article).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                body: expect.any(String),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String),
+              }),
+            ])
+          );
+        });
+    });
+    it("handles variety of ids!", () => {
+      return request(app)
+        .get("/api/articles/2")
+        .expect(200)
+        .then(() => {
+          return request(app).get("/api/articles/12").expect(200);
+        });
+    });
+    it("responds with an error code of 404 if the article cannot be found", () => {
+      return request(app).get("/api/articles/200").expect(404);
+    });
+    it("responds with an error code of 400 if the id passed in is invalid", () => {
+      return request(app)
+        .get("/api/articles/example")
+        .expect(400)
+        .then(() => {
+          return request(app).get("/api/articles/example1").expect(400);
+        })
+        .then(() => {
+          return request(app).get("/api/articles/{}");
+        })
+        .then(() => {
+          return request(app).get("/api/articles/[]");
+        });
+    });
+    it("responds with an error code of 500 for all of other errors", () => {
       jest.spyOn(db, "query").mockImplementation(() => {
         throw new Error("Mocked database error");
       });
