@@ -13,4 +13,12 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 
+app.use((err, req, res, next) => {
+  if (err.status) {
+    res.status(err.status).send({ message: err.message });
+  } else {
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
 module.exports = app;

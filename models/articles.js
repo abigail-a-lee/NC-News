@@ -16,26 +16,25 @@ exports.selectArticles = () => {
 };
 
 exports.selectArticleById = (id) => {
-  if (!/^\d+$/.test(id)) {
-    return Promise.reject({
-      status: 400,
-      message: "Bad Request: ID must be a number",
-    });
-  }
-
   const findQuery = `
   SELECT *
   FROM articles
 `;
   const filterQuery = ` WHERE article_id = $1;`;
-
-  return db.query(findQuery + filterQuery, [id]).then((result) => {
-    if (result.rowCount === 0) {
-      return Promise.reject({
-        status: 404,
-        message: "Article not found",
+  return new Promise((resolve, reject) => {
+    db.query(findQuery + filterQuery, [id])
+      .then((result) => {
+        if (result.rowCount === 0) {
+          const error = new Error("Article not found");
+          error.status = 404;
+          reject(error);
+        }
+        resolve(result.rows);
+      })
+      .catch((err) => {
+        err.message = "Bad Request: ID must be a number";
+        err.status = 400;
+        reject(err);
       });
-    }
-    return result.rows;
   });
 };

@@ -3,25 +3,19 @@ const {
   selectArticleById: { selectArticleById },
 } = require("../models");
 
-exports.getArticles = (req, res) => {
+exports.getArticles = (req, res, next) => {
   selectArticles()
     .then((articles) => {
       res.status(200).send({ articles });
     })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: "Internal Server Error" });
-    });
+    .catch(next);
 };
 
-exports.getArticleById = (req, res) => {
+exports.getArticleById = (req, res, next) => {
   const id = req.params.article_id;
   selectArticleById(id)
     .then((article) => {
       res.status(200).send({ article });
     })
-    .catch((err) => {
-      console.log(err);
-      res.status(err.status || 500).send({ message: err.message });
-    });
+    .catch(next);
 };
