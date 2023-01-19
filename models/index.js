@@ -4,3 +4,4 @@ exports.selectArticleById = require("./articles");
 exports.selectCommentsById = require("./comments");
 exports.insertComment = require("./comments");
 exports.updateArticleById = require("./articles");
+exports.selectUsers = require("./users");
