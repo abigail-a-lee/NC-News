@@ -428,6 +428,18 @@ describe("app", () => {
         expect(res4.body.message).toEqual("Bad Request: ID must be a number");
       });
     });
+    it("responds with an error code of 400 and appropriate message if request is incorrectly formatted", () => {
+      const incorrectComment = "username: 'lurker', body: 'hello world'";
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(incorrectComment)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toEqual(
+            "Bad Request: Missing username/body or request formatted incorrectly"
+          );
+        });
+    });
     it("responds with an error code of 400 and appropriate message if username/body/both are not present", () => {
       let incorrectComment = {
         pizza: "yummy",
@@ -447,7 +459,6 @@ describe("app", () => {
             pizza: "yummy",
             body: "fizzy lifting drinks",
           };
-          console.log(incorrectComment);
           return request(app)
             .post("/api/articles/1/comments")
             .send(incorrectComment)
@@ -474,18 +485,7 @@ describe("app", () => {
             });
         });
     });
-    it("responds with an error code of 400 and appropriate message if request is incorrectly formatted", () => {
-      const incorrectComment = "username: 'lurker', body: 'hello world'";
-      return request(app)
-        .post("/api/articles/1/comments")
-        .send(incorrectComment)
-        .expect(400)
-        .then((res) => {
-          expect(res.body.message).toEqual(
-            "Bad Request: Missing username/body or request formatted incorrectly"
-          );
-        });
-    });
+
     it("ignores erroneous properties, but still processes the request using correct properties", () => {
       let acceptableComment = {
         username: "lurker",
@@ -527,8 +527,183 @@ describe("app", () => {
           .post("/api/articles/1/comments")
           .send(testComment)
           .expect(500),
+      ]).then(([res]) => {
+        expect(res.body.message).toEqual("Internal Server Error");
+      });
+    });
+  });
+
+  describe("PATCH /api/articles/:article_id", () => {
+    const testVote = {
+      inc_votes: 1,
+    };
+    it("responds with a status 200 if successful", () => {
+      return request(app).patch("/api/articles/1/").send(testVote).expect(200);
+    });
+    it("responds with the updated article", () => {
+      return request(app)
+        .patch("/api/articles/1/")
+        .send(testVote)
+        .expect(200)
+        .then((res) => {
+          const article = res.body.article;
+          expect(article).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                article_img_url: expect.any(String),
+              }),
+            ])
+          );
+        });
+    });
+    it("actually updates the article", () => {
+      return request(app)
+        .patch("/api/articles/1/")
+        .send(testVote)
+        .expect(200)
+        .then(() => {
+          return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then((res) => {
+              const article = res.body.article;
+              expect(article[0].votes).toEqual(101);
+            });
+        });
+    });
+    it("handles negative votes correctly", () => {
+      const negativeVote = {
+        inc_votes: -1,
+      };
+      return request(app)
+        .patch("/api/articles/1/")
+        .send(negativeVote)
+        .expect(200)
+        .then(() => {
+          return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then((res) => {
+              const article = res.body.article;
+              expect(article[0].votes).toEqual(99);
+            });
+        });
+    });
+    it("handles negative vote totals correctly (IN THE DATABASE)", () => {
+      const negativeVote = {
+        inc_votes: -101,
+      };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(negativeVote)
+        .expect(200)
+        .then(() => {
+          return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then((res) => {
+              const article = res.body.article;
+              expect(article[0].votes).toEqual(-1);
+            });
+        });
+    });
+    it("responds with an error code of 404 and appropriate message if article_id passed in for patch does not exist", () => {
+      return Promise.all([
+        request(app).patch("/api/articles/200").send(testVote).expect(404),
       ]).then(([res1]) => {
-        expect(res1.body.message).toEqual("Internal Server Error");
+        expect(res1.body.message).toEqual(
+          "Cannot edit votes of article that does not exist"
+        );
+      });
+    });
+    it("responds with an error code of 400 and appropriate message if the id passed in is invalid", () => {
+      return Promise.all([
+        request(app).patch("/api/articles/hello").send(testVote).expect(400),
+        request(app).patch("/api/articles/hello1").send(testVote).expect(400),
+        request(app).patch("/api/articles/{}").send(testVote).expect(400),
+        request(app).patch("/api/articles/[]").send(testVote).expect(400),
+      ]).then(([res1, res2, res3, res4]) => {
+        expect(res1.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res2.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res3.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res4.body.message).toEqual("Bad Request: ID must be a number");
+      });
+    });
+    it("responds with an error code of 400 and appropriate message if request is formatted incorrectly", () => {
+      const incorrectVote = "inc_votes: 1";
+      return request(app)
+        .patch("/api/articles/1")
+        .send(incorrectVote)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toEqual(
+            "Bad Request: Missing vote increment amount or request formatted incorrectly"
+          );
+        });
+    });
+    it("responds with an error code of 400 and appropriate message if inc_votes property is not present", () => {
+      const incorrectVote = {
+        pizza: "yummy",
+      };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(incorrectVote)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toEqual(
+            "Bad Request: Missing vote increment amount or request formatted incorrectly"
+          );
+        });
+    });
+    it("ignores erroneous properties, but still processes the request using correct properties", () => {
+      let acceptableVote = {
+        pizza: "yummy",
+        cool: false,
+        likes: "making tests",
+        inc_votes: 1,
+      };
+      return request(app)
+        .patch("/api/articles/1/")
+        .send(acceptableVote)
+        .expect(200)
+        .then(() => {
+          return request(app)
+            .get("/api/articles/1/")
+            .expect(200)
+            .then((res) => {
+              const article = res.body.article;
+              expect(article[0]).toEqual(
+                expect.objectContaining({
+                  article_id: 1,
+                  title: "Living in the shadow of a great man",
+                  topic: "mitch",
+                  author: "butter_bridge",
+                  body: "I find this existence challenging",
+                  created_at: expect.any(String),
+                  votes: 101,
+                  article_img_url: expect.any(String),
+                })
+              );
+            });
+        });
+    });
+
+    it("responds with an error code of 500 for all of other errors", () => {
+      jest.spyOn(db, "query").mockImplementation(() => {
+        throw new Error("Internal Server Error");
+      });
+
+      return Promise.all([
+        request(app).patch("/api/articles/1").send(testVote).expect(500),
+      ]).then(([res]) => {
+        expect(res.body.message).toEqual("Internal Server Error");
       });
     });
   });

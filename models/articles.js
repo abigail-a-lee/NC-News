@@ -37,3 +37,22 @@ exports.selectArticleById = (id) => {
       });
   });
 };
+
+exports.updateArticleById = (id, votes) => {
+  const updateQuery = `
+  UPDATE articles
+  SET votes = votes + $2
+  WHERE article_id = $1
+  RETURNING *;
+  `;
+
+  return new Promise((resolve, reject) => {
+    db.query(updateQuery, [id, votes])
+      .then((result) => {
+        resolve(result.rows);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
