@@ -447,7 +447,6 @@ describe("app", () => {
             pizza: "yummy",
             body: "fizzy lifting drinks",
           };
-          console.log(incorrectComment);
           return request(app)
             .post("/api/articles/1/comments")
             .send(incorrectComment)
