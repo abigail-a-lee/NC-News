@@ -10,8 +10,14 @@ exports.selectArticles = () => {
   ORDER BY created_at DESC;
 `;
 
-  return db.query(findQuery).then((result) => {
-    return result.rows;
+  return new Promise((resolve, reject) => {
+    db.query(findQuery)
+      .then((result) => {
+        resolve(result.rows);
+      })
+      .catch((err) => {
+        reject(err);
+      });
   });
 };
 
@@ -24,16 +30,9 @@ exports.selectArticleById = (id) => {
   return new Promise((resolve, reject) => {
     db.query(findQuery + filterQuery, [id])
       .then((result) => {
-        if (result.rowCount === 0) {
-          const error = new Error("Article not found");
-          error.status = 404;
-          reject(error);
-        }
         resolve(result.rows);
       })
       .catch((err) => {
-        err.message = "Bad Request: ID must be a number";
-        err.status = 400;
         reject(err);
       });
   });
