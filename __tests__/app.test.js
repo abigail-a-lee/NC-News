@@ -550,7 +550,6 @@ describe("app", () => {
         .expect(200)
         .then((res) => {
           const article = res.body.article;
-          console.log(article);
           expect(article).toEqual(
             expect.arrayContaining([
               expect.objectContaining({
