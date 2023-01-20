@@ -766,9 +766,10 @@ describe("app", () => {
         .expect(200)
         .then((res) => {
           const articles = res.body.articles;
-          articles.forEach((article) => {
-            expect(article.topic).toBe("mitch");
-          });
+          expect(articles.length).toBeGreaterThan(0),
+            articles.forEach((article) => {
+              expect(article.topic).toBe("mitch");
+            });
         });
     });
     it("should be able to accept an 'author' filter as a query", () => {
@@ -780,9 +781,10 @@ describe("app", () => {
         .expect(200)
         .then((res) => {
           const articles = res.body.articles;
-          articles.forEach((article) => {
-            expect(article.author).toBe("icellusedkars");
-          });
+          expect(articles.length).toBeGreaterThan(0),
+            articles.forEach((article) => {
+              expect(article.author).toBe("icellusedkars");
+            });
         });
     });
     it("should be able to handle both filters simultaneously and return a correctly double filtered result!", () => {
@@ -791,10 +793,11 @@ describe("app", () => {
         .expect(200)
         .then((res) => {
           const articles = res.body.articles;
-          articles.forEach((article) => {
-            expect(article.author).toBe("rogersop"),
-              expect(article.topic).toBe("cats");
-          });
+          expect(articles.length).toBeGreaterThan(0),
+            articles.forEach((article) => {
+              expect(article.author).toBe("rogersop"),
+                expect(article.topic).toBe("cats");
+            });
         });
     });
     it("should have a 'sort_by' query that sorts articles by any valid column", () => {
@@ -851,10 +854,30 @@ describe("app", () => {
         .then((res) => {
           const articles = res.body.articles;
           expect(articles).toBeSortedBy("article_id", { ascending: true }),
+            expect(articles.length).toBeGreaterThan(0),
             articles.forEach((article) => {
               expect(article.author).toBe("icellusedkars"),
                 expect(article.topic).toBe("mitch");
             });
+        });
+    });
+  });
+
+  describe("GET /api/articles/:article_id (now with comment count!)", () => {
+    it("should return a comment_count property", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .then((res) => {
+          let article = res.body.article;
+          expect(article[0]).toHaveProperty("comment_count");
+        });
+    });
+    it("should return correct comment count", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .then((res) => {
+          let article = res.body.article;
+          expect(article[0].comment_count).toBe(11);
         });
     });
   });

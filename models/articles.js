@@ -36,12 +36,17 @@ exports.selectArticles = (queries) => {
 
 exports.selectArticleById = (id) => {
   const findQuery = `
-  SELECT *
+  SELECT articles.*,
+  COUNT(comments.article_id)::integer as comment_count
   FROM articles
+  LEFT JOIN comments ON articles.article_id = comments.article_id
 `;
-  const filterQuery = ` WHERE article_id = $1;`;
+  const filterQuery = ` WHERE articles.article_id = $1`;
+
+  const groupQuery = ` GROUP BY articles.article_id, articles.author, articles.title, articles.topic, articles.created_at, articles.body, articles.votes, articles.article_img_url;`;
+
   return new Promise((resolve, reject) => {
-    db.query(findQuery + filterQuery, [id])
+    db.query(findQuery + filterQuery + groupQuery, [id])
       .then((result) => {
         resolve(result.rows);
       })
