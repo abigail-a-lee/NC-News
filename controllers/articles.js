@@ -5,7 +5,39 @@ const {
 } = require("../models");
 
 exports.getArticles = (req, res, next) => {
-  selectArticles()
+  // Initialising queries from user input or default if not provided input
+  const queries = {};
+  queries.sortColumn = req.query.sort_by ? req.query.sort_by : "created_at";
+  queries.sortOrder = req.query.order ? req.query.order : "DESC";
+  queries.topic = req.query.topic;
+  queries.author = req.query.author;
+
+  // Input validation on queries
+  if (
+    ![
+      "author",
+      "title",
+      "article_id",
+      "topic",
+      "created_at",
+      "votes",
+      "article_img_url",
+      "comment_count",
+    ].includes(queries.sortColumn)
+  ) {
+    const err = new Error("Invalid sort category");
+    err.status = 400;
+    return next(err);
+  }
+  if (!["ASC", "DESC"].includes(queries.sortOrder.toUpperCase())) {
+    const err = new Error("Invalid sort order (must be 'asc' or 'desc')");
+    err.status = 400;
+    return next(err);
+  }
+  if (typeof queries.topic !== "string") queries.topic = null;
+  if (typeof queries.author !== "string") queries.author = null;
+
+  selectArticles(queries)
     .then((articles) => {
       res.status(200).send({ articles });
     })

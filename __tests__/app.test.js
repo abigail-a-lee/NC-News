@@ -15,7 +15,7 @@ afterEach(() => {
 afterAll(() => db.end());
 
 describe("app", () => {
-  describe("GET /api/topics", () => {
+  describe("GET /api/topics endpoint", () => {
     it("responds with a status 200 if successful", () => {
       return request(app).get("/api/topics").expect(200);
     });
@@ -63,7 +63,7 @@ describe("app", () => {
     });
   });
 
-  describe("GET /api/articles", () => {
+  describe("GET /api/articles endpoint", () => {
     it("responds with a status 200 if successful", () => {
       return request(app).get("/api/articles").expect(200);
     });
@@ -133,7 +133,7 @@ describe("app", () => {
     });
   });
 
-  describe("GET /api/articles/:article_id", () => {
+  describe("GET /api/articles/:article_id endpoint", () => {
     it("responds with a status 200 if successful", () => {
       return request(app).get("/api/articles/1").expect(200);
     });
@@ -210,7 +210,7 @@ describe("app", () => {
     });
   });
 
-  describe("GET /api/articles/:article_id/comments", () => {
+  describe("GET /api/articles/:article_id/comments endpoint", () => {
     it("responds with a status 200 if successful", () => {
       return request(app).get("/api/articles/1/comments").expect(200);
     });
@@ -296,7 +296,7 @@ describe("app", () => {
     });
   });
 
-  describe("POST /api/articles/:article_id/comments", () => {
+  describe("POST /api/articles/:article_id/comments endpoint", () => {
     const testComment = {
       username: "lurker",
       body: "I am not crazy! I know he swapped those numbers! I knew it was 1216. One after Magna Carta. As if I could ever make such a mistake. Never. Never! I just - I just couldn't prove it. He - he covered his tracks, he got that idiot at the copy shop to lie for him. You think this is something? You think this is bad? This? This chicanery? He's done worse. That billboard! Are you telling me that a man just happens to fall like that? No! He orchestrated it! Jimmy! He defecated through a sunroof! And I saved him! And I shouldn't have. I took him into my own firm! What was I thinking? He'll never change. He'll never change! Ever since he was 9, always the same! Couldn't keep his hands out of the cash drawer! But not our Jimmy! Couldn't be precious Jimmy! Stealing them blind! And he gets to be a lawyer!? What a sick joke! I should've stopped him when I had the chance! And you - you have to stop him! You-",
@@ -533,7 +533,7 @@ describe("app", () => {
     });
   });
 
-  describe("PATCH /api/articles/:article_id", () => {
+  describe("PATCH /api/articles/:article_id endpoint", () => {
     const testVote = {
       inc_votes: 1,
     };
@@ -554,7 +554,6 @@ describe("app", () => {
                 title: "Living in the shadow of a great man",
                 topic: "mitch",
                 author: "butter_bridge",
-                body: "I find this existence challenging",
                 created_at: expect.any(String),
                 votes: expect.any(Number),
                 article_img_url: expect.any(String),
@@ -708,7 +707,7 @@ describe("app", () => {
     });
   });
 
-  describe("GET /api/users", () => {
+  describe("GET /api/users endpoint", () => {
     it("responds with a status 200 if successful", () => {
       return request(app).get("/api/users").expect(200);
     });
@@ -754,6 +753,109 @@ describe("app", () => {
           expect(res1.body.message).toEqual("Internal Server Error");
         }
       );
+    });
+  });
+
+  describe("GET /api/articles endpoint (now with queries!)", () => {
+    it("should be able to accept a 'topic' filter as a query", () => {
+      return request(app).get("/api/articles?topic=mitch").expect(200);
+    });
+    it("should only return matching topic articles when using topic filter", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          articles.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+          });
+        });
+    });
+    it("should be able to accept an 'author' filter as a query", () => {
+      return request(app).get("/api/articles?author=icellusedkars").expect(200);
+    });
+    it("should only return matching author articles when using author filter", () => {
+      return request(app)
+        .get("/api/articles?author=icellusedkars")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          articles.forEach((article) => {
+            expect(article.author).toBe("icellusedkars");
+          });
+        });
+    });
+    it("should be able to handle both filters simultaneously and return a correctly double filtered result!", () => {
+      return request(app)
+        .get("/api/articles?author=rogersop&topic=cats")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          articles.forEach((article) => {
+            expect(article.author).toBe("rogersop"),
+              expect(article.topic).toBe("cats");
+          });
+        });
+    });
+    it("should have a 'sort_by' query that sorts articles by any valid column", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          expect(articles).toBeSortedBy("title", { descending: true });
+        });
+    });
+    it("should return an error if invalid column is passed through", () => {
+      return request(app)
+        .get("/api/articles?sort_by=pizza")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toBe("Invalid sort category");
+        });
+    });
+    it("should have an 'order' query that allows to sort articles by either ascending or descending", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          expect(articles).toBeSortedBy("created_at", { ascending: true });
+        });
+    });
+    it("should return an error if invalid order is passed through", () => {
+      return request(app)
+        .get("/api/articles?order=pizza")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toBe(
+            "Invalid sort order (must be 'asc' or 'desc')"
+          );
+        });
+    });
+    it("should allow simultaneous 'sort_by' and 'order_by' queries", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title&order=asc")
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          expect(articles).toBeSortedBy("title", { ascending: true });
+        });
+    });
+    it("should allow simultaneous use of all queries (chaos ensues)", () => {
+      return request(app)
+        .get(
+          "/api/articles?sort_by=article_id&order=asc&author=icellusedkars&topic=mitch"
+        )
+        .expect(200)
+        .then((res) => {
+          const articles = res.body.articles;
+          expect(articles).toBeSortedBy("article_id", { ascending: true }),
+            articles.forEach((article) => {
+              expect(article.author).toBe("icellusedkars"),
+                expect(article.topic).toBe("mitch");
+            });
+        });
     });
   });
 });

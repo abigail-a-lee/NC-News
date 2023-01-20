@@ -1,17 +1,30 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
-exports.selectArticles = () => {
+exports.selectArticles = (queries) => {
   const findQuery = `
-  SELECT articles.author, articles.title, articles.article_id,  articles.topic, articles.created_at, articles.votes, articles.article_img_url,
-  COUNT (comments.article_id)::integer as comment_count
+  SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
+  COUNT(comments.article_id)::integer as comment_count
   FROM articles
   LEFT JOIN comments ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id
-  ORDER BY created_at DESC;
+  WHERE (articles.topic = %L OR %L IS NULL)
+  AND (articles.author = %L OR %L IS NULL)
+  GROUP BY articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url
+  ORDER BY %I %s;
 `;
 
+  const formattedQuery = format(
+    findQuery,
+    queries.topic,
+    queries.topic,
+    queries.author,
+    queries.author,
+    queries.sortColumn,
+    queries.sortOrder
+  );
+
   return new Promise((resolve, reject) => {
-    db.query(findQuery)
+    db.query(formattedQuery)
       .then((result) => {
         resolve(result.rows);
       })
@@ -43,7 +56,7 @@ exports.updateArticleById = (id, votes) => {
   UPDATE articles
   SET votes = votes + $2
   WHERE article_id = $1
-  RETURNING *;
+  RETURNING article_id, title, topic, author, created_at, votes, article_img_url;
   `;
 
   return new Promise((resolve, reject) => {
