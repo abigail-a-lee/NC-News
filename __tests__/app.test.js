@@ -858,4 +858,23 @@ describe("app", () => {
         });
     });
   });
+
+  describe("GET /api/articles/:article_id (now with comment count!)", () => {
+    it("should return a comment_count property", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .then((res) => {
+          let article = res.body.article;
+          expect(article[0]).toHaveProperty("comment_count");
+        });
+    });
+    it("should return correct comment count", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .then((res) => {
+          let article = res.body.article;
+          expect(article[0].comment_count).toBe(11);
+        });
+    });
+  });
 });
