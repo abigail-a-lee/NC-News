@@ -3,6 +3,7 @@ const app = require("../app.js");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(testData);
@@ -313,16 +314,18 @@ describe("app", () => {
         .send(testComment)
         .expect(201)
         .then((res) => {
-          let comment = res.body;
+          const comment = res.body.comment;
           expect(comment).toEqual(
-            expect.objectContaining({
-              author: testComment.username,
-              comment_id: expect.any(Number),
-              article_id: 1,
-              body: testComment.body,
-              created_at: expect.any(String),
-              votes: 0,
-            })
+            expect.arrayContaining([
+              expect.objectContaining({
+                author: testComment.username,
+                comment_id: expect.any(Number),
+                article_id: 1,
+                body: testComment.body,
+                created_at: expect.any(String),
+                votes: 0,
+              }),
+            ])
           );
         });
     });
@@ -340,7 +343,7 @@ describe("app", () => {
               expect(comments[0]).toEqual(
                 expect.objectContaining({
                   author: testComment.username,
-                  comment_id: comment.body.comment_id,
+                  comment_id: comment.body.comment[0].comment_id,
                   article_id: 3,
                   body: testComment.body,
                   created_at: expect.any(String),
@@ -371,7 +374,7 @@ describe("app", () => {
           expect(comments1[0]).toEqual(
             expect.objectContaining({
               author: testComment.username,
-              comment_id: newComment1.body.comment_id,
+              comment_id: newComment1.body.comment[0].comment_id,
               article_id: 9,
               body: testComment.body,
               created_at: expect.any(String),
@@ -381,7 +384,7 @@ describe("app", () => {
           expect(comments2[0]).toEqual(
             expect.objectContaining({
               author: testComment.username,
-              comment_id: newComment2.body.comment_id,
+              comment_id: newComment2.body.comment[0].comment_id,
               article_id: 11,
               body: testComment.body,
               created_at: expect.any(String),
@@ -506,7 +509,7 @@ describe("app", () => {
               expect(comments[0]).toEqual(
                 expect.objectContaining({
                   author: acceptableComment.username,
-                  comment_id: comment.body.comment_id,
+                  comment_id: comment.body.comment[0].comment_id,
                   article_id: 1,
                   body: acceptableComment.body,
                   created_at: expect.any(String),
@@ -925,6 +928,20 @@ describe("app", () => {
         expect(res3.body.message).toEqual("Bad Request: ID must be a number");
         expect(res4.body.message).toEqual("Bad Request: ID must be a number");
       });
+    });
+  });
+
+  describe("GET /api", () => {
+    it("responds with status code of 200 upon successful retrieval", () => {
+      return request(app).get("/api").expect(200);
+    });
+    it("responds with endpoints.json file contents", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then((endpointsResponse) => {
+          expect(endpointsResponse.body).toEqual({ endpoints });
+        });
     });
   });
 });

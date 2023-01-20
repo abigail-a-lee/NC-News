@@ -6,3 +6,4 @@ exports.postComment = require("./comments");
 exports.patchArticleById = require("./articles");
 exports.getUsers = require("./users");
 exports.deleteCommentById = require("./comments");
+exports.getEndpoints = require("./api");

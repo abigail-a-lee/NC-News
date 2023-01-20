@@ -65,8 +65,8 @@ exports.postComment = (req, res, next) => {
       } else {
         // After article confirmed to exist, perform creation
         insertComment(id, newComment)
-          .then((comments) => {
-            res.status(201).send(comments[0]);
+          .then((comment) => {
+            res.status(201).send({ comment });
           })
           .catch((err) => {
             err.status = 500;
