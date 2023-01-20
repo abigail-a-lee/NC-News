@@ -64,7 +64,7 @@ For more specific information, please see `endpoints.json` or use the `GET /api`
 
 ## **Hosted version**
 
-### **You can try a live production version of this app, hosted with Render, by [clicking here](https://abi-nc-news.onrender.com/api).**
+### **You can try out a live production version of this app, using Swagger UI by [clicking here](https://abi-nc-news.onrender.com/api-docs).**
 
 ---
 
