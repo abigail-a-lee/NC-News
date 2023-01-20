@@ -1,4 +1,7 @@
 const db = require("../db/connection");
+const {
+  selectArticleById: { selectArticleById },
+} = require("./index");
 
 exports.selectCommentsById = (id) => {
   const findQuery = `SELECT * FROM comments `;
@@ -8,16 +11,31 @@ exports.selectCommentsById = (id) => {
   return new Promise((resolve, reject) => {
     db.query(findQuery + filterQuery + sortQuery, [id])
       .then((result) => {
-        if (result.rowCount === 0) {
-          const error = new Error("No comments found with matching article ID");
-          error.status = 404;
-          reject(error);
-        }
         resolve(result.rows);
       })
       .catch((err) => {
-        err.message = "Bad Request: ID must be a number";
-        err.status = 400;
+        reject(err);
+      });
+  });
+};
+
+exports.insertComment = (id, newComment) => {
+  const insertQuery = `
+  INSERT INTO comments 
+  (body, votes, author, article_id, created_at) 
+  VALUES ($1, 0, $2, $3, $4) 
+  RETURNING *;
+  `;
+
+  // Creates timestamp from current time when function is executed
+  const timestamp = new Date().toISOString();
+
+  return new Promise((resolve, reject) => {
+    db.query(insertQuery, [newComment.body, newComment.username, id, timestamp])
+      .then((result) => {
+        resolve(result.rows);
+      })
+      .catch((err) => {
         reject(err);
       });
   });

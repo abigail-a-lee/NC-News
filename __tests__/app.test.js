@@ -52,12 +52,12 @@ describe("app", () => {
     });
     it("responds with a status 500 when an issue occurs", () => {
       jest.spyOn(db, "query").mockImplementation(() => {
-        throw new Error("Mocked database error");
+        throw new Error("Internal Server Error");
       });
 
       return Promise.all([request(app).get("/api/topics").expect(500)]).then(
         ([res1]) => {
-          expect(res1.body).toHaveProperty("message");
+          expect(res1.body.message).toEqual("Internal Server Error");
         }
       );
     });
@@ -122,12 +122,12 @@ describe("app", () => {
     });
     it("responds with a status 500 when an issue occurs", () => {
       jest.spyOn(db, "query").mockImplementation(() => {
-        throw new Error("Mocked database error");
+        throw new Error("Internal Server Error");
       });
 
       return Promise.all([request(app).get("/api/articles").expect(500)]).then(
         ([res1]) => {
-          expect(res1.body).toHaveProperty("message");
+          expect(res1.body.message).toEqual("Internal Server Error");
         }
       );
     });
@@ -181,7 +181,7 @@ describe("app", () => {
       return Promise.all([
         request(app).get("/api/articles/200").expect(404),
       ]).then(([res1]) => {
-        expect(res1.body).toHaveProperty("message");
+        expect(res1.body.message).toEqual("Article not found");
       });
     });
     it("responds with an error code of 400 if the id passed in is invalid", () => {
@@ -191,21 +191,21 @@ describe("app", () => {
         request(app).get("/api/articles/{}").expect(400),
         request(app).get("/api/articles/[]").expect(400),
       ]).then(([res1, res2, res3, res4]) => {
-        expect(res1.body).toHaveProperty("message");
-        expect(res2.body).toHaveProperty("message");
-        expect(res3.body).toHaveProperty("message");
-        expect(res4.body).toHaveProperty("message");
+        expect(res1.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res2.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res3.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res4.body.message).toEqual("Bad Request: ID must be a number");
       });
     });
     it("responds with an error code of 500 for all of other errors", () => {
       jest.spyOn(db, "query").mockImplementation(() => {
-        throw new Error("Mocked database error");
+        throw new Error("Internal Server Error");
       });
 
       return Promise.all([
         request(app).get("/api/articles/1").expect(500),
       ]).then(([res1]) => {
-        expect(res1.body).toHaveProperty("message");
+        expect(res1.body.message).toEqual("Internal Server Error");
       });
     });
   });
@@ -265,7 +265,9 @@ describe("app", () => {
       return Promise.all([
         request(app).get("/api/articles/200/comments").expect(404),
       ]).then(([res1]) => {
-        expect(res1.body).toHaveProperty("message");
+        expect(res1.body.message).toEqual(
+          "No comments found with matching article ID"
+        );
       });
     });
     it("responds with an error code of 400 if the id passed in is invalid", () => {
@@ -275,21 +277,257 @@ describe("app", () => {
         request(app).get("/api/articles/{}/comments").expect(400),
         request(app).get("/api/articles/[]/comments").expect(400),
       ]).then(([res1, res2, res3, res4]) => {
-        expect(res1.body).toHaveProperty("message");
-        expect(res2.body).toHaveProperty("message");
-        expect(res3.body).toHaveProperty("message");
-        expect(res4.body).toHaveProperty("message");
+        expect(res1.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res2.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res3.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res4.body.message).toEqual("Bad Request: ID must be a number");
       });
     });
     it("responds with an error code of 500 for all of other errors", () => {
       jest.spyOn(db, "query").mockImplementation(() => {
-        throw new Error("Mocked database error");
+        throw new Error("Internal Server Error");
       });
 
       return Promise.all([
         request(app).get("/api/articles/1/comments").expect(500),
       ]).then(([res1]) => {
-        expect(res1.body).toHaveProperty("message");
+        expect(res1.body.message).toEqual("Internal Server Error");
+      });
+    });
+  });
+
+  describe("POST /api/articles/:article_id/comments", () => {
+    const testComment = {
+      username: "lurker",
+      body: "I am not crazy! I know he swapped those numbers! I knew it was 1216. One after Magna Carta. As if I could ever make such a mistake. Never. Never! I just - I just couldn't prove it. He - he covered his tracks, he got that idiot at the copy shop to lie for him. You think this is something? You think this is bad? This? This chicanery? He's done worse. That billboard! Are you telling me that a man just happens to fall like that? No! He orchestrated it! Jimmy! He defecated through a sunroof! And I saved him! And I shouldn't have. I took him into my own firm! What was I thinking? He'll never change. He'll never change! Ever since he was 9, always the same! Couldn't keep his hands out of the cash drawer! But not our Jimmy! Couldn't be precious Jimmy! Stealing them blind! And he gets to be a lawyer!? What a sick joke! I should've stopped him when I had the chance! And you - you have to stop him! You-",
+    };
+    it("responds with a status 201 if successful", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(testComment)
+        .expect(201);
+    });
+    it("responds with the posted comment", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(testComment)
+        .expect(201)
+        .then((res) => {
+          let comment = res.body;
+          expect(comment).toEqual(
+            expect.objectContaining({
+              author: testComment.username,
+              comment_id: expect.any(Number),
+              article_id: 1,
+              body: testComment.body,
+              created_at: expect.any(String),
+              votes: 0,
+            })
+          );
+        });
+    });
+    it("actually adds the comment to the database", () => {
+      return request(app)
+        .post("/api/articles/3/comments")
+        .send(testComment)
+        .expect(201)
+        .then((comment) => {
+          return request(app)
+            .get("/api/articles/3/comments")
+            .expect(200)
+            .then((res) => {
+              const comments = res.body.comments;
+              expect(comments[0]).toEqual(
+                expect.objectContaining({
+                  author: testComment.username,
+                  comment_id: comment.body.comment_id,
+                  article_id: 3,
+                  body: testComment.body,
+                  created_at: expect.any(String),
+                  votes: 0,
+                })
+              );
+            });
+        });
+    });
+
+    it("handles variety of ids!", () => {
+      return Promise.all([
+        request(app)
+          .post("/api/articles/9/comments")
+          .send(testComment)
+          .expect(201),
+        request(app)
+          .post("/api/articles/11/comments")
+          .send(testComment)
+          .expect(201),
+      ]).then(([newComment1, newComment2]) => {
+        return Promise.all([
+          request(app).get("/api/articles/9/comments").expect(200),
+          request(app).get("/api/articles/11/comments").expect(200),
+        ]).then(([res1, res2]) => {
+          const comments1 = res1.body.comments;
+          const comments2 = res2.body.comments;
+          expect(comments1[0]).toEqual(
+            expect.objectContaining({
+              author: testComment.username,
+              comment_id: newComment1.body.comment_id,
+              article_id: 9,
+              body: testComment.body,
+              created_at: expect.any(String),
+              votes: 0,
+            })
+          );
+          expect(comments2[0]).toEqual(
+            expect.objectContaining({
+              author: testComment.username,
+              comment_id: newComment2.body.comment_id,
+              article_id: 11,
+              body: testComment.body,
+              created_at: expect.any(String),
+              votes: 0,
+            })
+          );
+        });
+      });
+    });
+    it("responds with an error code of 404 and appropriate message if article_id passed in for new comment does not exist", () => {
+      return Promise.all([
+        request(app)
+          .post("/api/articles/200/comments")
+          .send(testComment)
+          .expect(404),
+      ]).then(([res1]) => {
+        expect(res1.body.message).toEqual(
+          "Cannot post comment to article that does not exist"
+        );
+      });
+    });
+    it("responds with an error code of 400 and appropriate message if the id passed in is invalid", () => {
+      return Promise.all([
+        request(app)
+          .post("/api/articles/example/comments")
+          .send(testComment)
+          .expect(400),
+        request(app)
+          .post("/api/articles/example1/comments")
+          .send(testComment)
+          .expect(400),
+        request(app)
+          .post("/api/articles/{}/comments")
+          .send(testComment)
+          .expect(400),
+        request(app)
+          .post("/api/articles/[]/comments")
+          .send(testComment)
+          .expect(400),
+      ]).then(([res1, res2, res3, res4]) => {
+        expect(res1.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res2.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res3.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res4.body.message).toEqual("Bad Request: ID must be a number");
+      });
+    });
+    it("responds with an error code of 400 and appropriate message if username/body/both are not present", () => {
+      let incorrectComment = {
+        pizza: "yummy",
+        sleep: false,
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(incorrectComment)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toEqual(
+            "Bad Request: Missing username/body or request formatted incorrectly"
+          );
+        })
+        .then(() => {
+          incorrectComment = {
+            pizza: "yummy",
+            body: "fizzy lifting drinks",
+          };
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send(incorrectComment)
+            .expect(400)
+            .then((res) => {
+              expect(res.body.message).toEqual(
+                "Bad Request: Missing username/body or request formatted incorrectly"
+              );
+            });
+        })
+        .then(() => {
+          incorrectComment = {
+            username: "lurker",
+            kitties: "cuddly",
+          };
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send(incorrectComment)
+            .expect(400)
+            .then((res) => {
+              expect(res.body.message).toEqual(
+                "Bad Request: Missing username/body or request formatted incorrectly"
+              );
+            });
+        });
+    });
+    it("responds with an error code of 400 and appropriate message if request is incorrectly formatted", () => {
+      const incorrectComment = "username: 'lurker', body: 'hello world'";
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(incorrectComment)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toEqual(
+            "Bad Request: Missing username/body or request formatted incorrectly"
+          );
+        });
+    });
+    it("ignores erroneous properties, but still processes the request using correct properties", () => {
+      let acceptableComment = {
+        username: "lurker",
+        cool: false,
+        likes: "making tests",
+        body: "Posting in a legendary thread!",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(acceptableComment)
+        .expect(201)
+        .then((comment) => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then((res) => {
+              const comments = res.body.comments;
+              expect(comments[0]).toEqual(
+                expect.objectContaining({
+                  author: acceptableComment.username,
+                  comment_id: comment.body.comment_id,
+                  article_id: 1,
+                  body: acceptableComment.body,
+                  created_at: expect.any(String),
+                  votes: 0,
+                })
+              );
+            });
+        });
+    });
+
+    it("responds with an error code of 500 for all of other errors", () => {
+      jest.spyOn(db, "query").mockImplementation(() => {
+        throw new Error("Internal Server Error");
+      });
+
+      return Promise.all([
+        request(app)
+          .post("/api/articles/1/comments")
+          .send(testComment)
+          .expect(500),
+      ]).then(([res1]) => {
+        expect(res1.body.message).toEqual("Internal Server Error");
       });
     });
   });
