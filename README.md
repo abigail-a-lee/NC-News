@@ -15,3 +15,9 @@ PGDATABASE=nc_news
 ```
 PGDATABASE=nc_news_test
 ```
+
+## Hosted version
+
+Live production version of this app is available here:
+
+https://abi-nc-news.onrender.com/api
