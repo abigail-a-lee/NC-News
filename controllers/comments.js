@@ -11,6 +11,7 @@ const {
 exports.getCommentsById = (req, res, next) => {
   const id = req.params.article_id;
 
+  // Input validation
   if (isNaN(parseInt(id))) {
     const err = new Error("Bad Request: ID must be a number");
     err.status = 400;
@@ -36,6 +37,7 @@ exports.postComment = (req, res, next) => {
   const id = req.params.article_id;
   const newComment = req.body;
 
+  // Input validation
   if (isNaN(parseInt(id))) {
     const err = new Error("Bad Request: ID must be a number");
     err.status = 400;
@@ -54,6 +56,7 @@ exports.postComment = (req, res, next) => {
     return next(err);
   }
 
+  // Check if article exists before performing any comment creation
   selectArticleById(id)
     .then((article) => {
       if (article.length === 0) {
@@ -63,6 +66,7 @@ exports.postComment = (req, res, next) => {
         err.status = 404;
         return next(err);
       } else {
+        // After article confirmed to exist, perform creation
         insertComment(id, newComment)
           .then((comments) => {
             res.status(201).send(comments[0]);
