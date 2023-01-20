@@ -789,6 +789,11 @@
     "license": {
       "name": "ISC"
     },
+    "contact": {
+      "name": "Abigail Lee",
+      "email": "aabigaillee@gmail.com",
+      "url": "https://github.com/abigail-a-lee"
+    },
     "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3).\n\nnc-news API"
   },
   "servers": [
