@@ -1,7 +1,7 @@
 {
-  "name": "be-nc-news",
+  "name": "al-nc-news",
   "version": "1.0.0",
-  "description": "bc-nc-news",
+  "description": "nc-news API",
   "main": "listen.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
