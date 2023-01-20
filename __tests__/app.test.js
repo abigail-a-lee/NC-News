@@ -313,16 +313,18 @@ describe("app", () => {
         .send(testComment)
         .expect(201)
         .then((res) => {
-          let comment = res.body;
+          const comment = res.body.comment;
           expect(comment).toEqual(
-            expect.objectContaining({
-              author: testComment.username,
-              comment_id: expect.any(Number),
-              article_id: 1,
-              body: testComment.body,
-              created_at: expect.any(String),
-              votes: 0,
-            })
+            expect.arrayContaining([
+              expect.objectContaining({
+                author: testComment.username,
+                comment_id: expect.any(Number),
+                article_id: 1,
+                body: testComment.body,
+                created_at: expect.any(String),
+                votes: 0,
+              }),
+            ])
           );
         });
     });
@@ -340,7 +342,7 @@ describe("app", () => {
               expect(comments[0]).toEqual(
                 expect.objectContaining({
                   author: testComment.username,
-                  comment_id: comment.body.comment_id,
+                  comment_id: comment.body.comment[0].comment_id,
                   article_id: 3,
                   body: testComment.body,
                   created_at: expect.any(String),
@@ -371,7 +373,7 @@ describe("app", () => {
           expect(comments1[0]).toEqual(
             expect.objectContaining({
               author: testComment.username,
-              comment_id: newComment1.body.comment_id,
+              comment_id: newComment1.body.comment[0].comment_id,
               article_id: 9,
               body: testComment.body,
               created_at: expect.any(String),
@@ -381,7 +383,7 @@ describe("app", () => {
           expect(comments2[0]).toEqual(
             expect.objectContaining({
               author: testComment.username,
-              comment_id: newComment2.body.comment_id,
+              comment_id: newComment2.body.comment[0].comment_id,
               article_id: 11,
               body: testComment.body,
               created_at: expect.any(String),
@@ -506,7 +508,7 @@ describe("app", () => {
               expect(comments[0]).toEqual(
                 expect.objectContaining({
                   author: acceptableComment.username,
-                  comment_id: comment.body.comment_id,
+                  comment_id: comment.body.comment[0].comment_id,
                   article_id: 1,
                   body: acceptableComment.body,
                   created_at: expect.any(String),
@@ -547,6 +549,7 @@ describe("app", () => {
         .expect(200)
         .then((res) => {
           const article = res.body.article;
+          console.log(article);
           expect(article).toEqual(
             expect.arrayContaining([
               expect.objectContaining({
