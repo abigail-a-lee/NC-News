@@ -5,17 +5,18 @@
       "get": {
         "summary": "/api/topics",
         "responses": {},
-        "tags": []
+        "tags": ["topics"]
       }
     },
     "/api/articles": {
       "get": {
         "summary": "/api/articles",
+
         "parameters": [
           {
             "name": "topic",
             "in": "query",
-            "example": "mitch",
+            "example": "coding",
             "schema": {
               "type": "string"
             }
@@ -23,7 +24,7 @@
           {
             "name": "author",
             "in": "query",
-            "example": "icellusedkars",
+            "example": "cooljmessy",
             "schema": {
               "type": "string"
             }
@@ -31,7 +32,7 @@
           {
             "name": "sort_by",
             "in": "query",
-            "example": "title",
+            "example": "comment_count",
             "schema": {
               "type": "string"
             }
@@ -39,7 +40,7 @@
           {
             "name": "order",
             "in": "query",
-            "example": "asc",
+            "example": "desc",
             "schema": {
               "type": "string"
             }
@@ -129,7 +130,7 @@
             }
           }
         },
-        "tags": []
+        "tags": ["articles"]
       }
     },
     "/api/articles/{article_id}": {
@@ -256,7 +257,7 @@
             }
           }
         },
-        "tags": []
+        "tags": ["articles"]
       },
       "patch": {
         "summary": "/api/articles/{article_id}",
@@ -265,7 +266,7 @@
             "name": "article_id",
             "in": "path",
             "required": true,
-            "example": "1/",
+            "example": "1",
             "schema": {
               "type": "string"
             }
@@ -389,7 +390,7 @@
             }
           }
         },
-        "tags": []
+        "tags": ["articles"]
       }
     },
     "/api/articles/{article_id}/comments": {
@@ -512,7 +513,7 @@
             }
           }
         },
-        "tags": []
+        "tags": ["articles"]
       },
       "post": {
         "summary": "/api/articles/{article_id}/comments",
@@ -535,7 +536,7 @@
                 "properties": {
                   "username": {
                     "type": "string",
-                    "example": "lurker"
+                    "example": "bettercallchuck"
                   },
                   "body": {
                     "type": "string",
@@ -583,9 +584,9 @@
                       "example": [
                         {
                           "comment_id": 19,
-                          "body": "I am not crazy! I know he swapped those numbers! I knew it was 1216. One after Magna Carta. As if I could ever make such a mistake. Never. Never! I just - I just couldn't prove it. He - he covered his tracks, he got that idiot at the copy shop to lie for him. You think this is something? You think this is bad? This? This chicanery? He's done worse. That billboard! Are you telling me that a man just happens to fall like that? No! He orchestrated it! Jimmy! He defecated through a sunroof! And I saved him! And I shouldn't have. I took him into my own firm! What was I thinking? He'll never change. He'll never change! Ever since he was 9, always the same! Couldn't keep his hands out of the cash drawer! But not our Jimmy! Couldn't be precious Jimmy! Stealing them blind! And he gets to be a lawyer!? What a sick joke! I should've stopped him when I had the chance! And you - you have to stop him! You-",
+                          "body": "I suggest you tread lightly",
                           "article_id": 1,
-                          "author": "lurker",
+                          "author": "WW",
                           "votes": 0,
                           "created_at": "2023-01-20T21:24:28.826Z"
                         }
@@ -645,7 +646,7 @@
             }
           }
         },
-        "tags": []
+        "tags": ["articles"]
       }
     },
     "/api/users": {
@@ -706,7 +707,7 @@
             }
           }
         },
-        "tags": []
+        "tags": ["users"]
       }
     },
     "/api/comments/{comment_id}": {
@@ -760,13 +761,30 @@
             }
           }
         },
-        "tags": []
+        "tags": ["comments"]
       }
     }
   },
-  "tags": [],
+  "tags": [
+    {
+      "name": "articles",
+      "description": "Endpoints using articles table"
+    },
+    {
+      "name": "topics",
+      "description": "Endpoints using topics table"
+    },
+    {
+      "name": "comments",
+      "description": "Endpoints using comments table"
+    },
+    {
+      "name": "users",
+      "description": "Endpoints using users table"
+    }
+  ],
   "info": {
-    "title": "al-nc-news",
+    "title": "NC News API",
     "version": "1.0.0",
     "license": {
       "name": "ISC"
