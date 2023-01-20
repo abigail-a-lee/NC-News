@@ -485,7 +485,6 @@ describe("app", () => {
             });
         });
     });
-
     it("ignores erroneous properties, but still processes the request using correct properties", () => {
       let acceptableComment = {
         username: "lurker",
