@@ -9,15 +9,83 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "localhost:9090",
-  "basePath": "/",
-  "tags": [
-    {
-      "name": "Users",
-      "description": "API for users in the system"
-    }
-  ],
-  "schemes": ["http"],
-  "consumes": ["application/json"],
-  "produces": ["application/json"]
+  "paths": {
+    "/api": {
+      "get": {
+        "summary": "Serves a glossary of all available endpoints in API",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/topics": {
+      "get": {
+        "summary": "Serves an array of all topics",
+        "parameters": [
+          {
+            "name": "author",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "topic",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "topics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "slug": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "host": "localhost:9090",
+    "basePath": "/",
+    "tags": [
+      {
+        "name": "Users",
+        "description": "API for users in the system"
+      }
+    ],
+
+    "schemes": ["http"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"]
+  }
 }
