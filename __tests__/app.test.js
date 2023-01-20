@@ -3,7 +3,6 @@ const app = require("../app.js");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
-const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(testData);
@@ -928,20 +927,6 @@ describe("app", () => {
         expect(res3.body.message).toEqual("Bad Request: ID must be a number");
         expect(res4.body.message).toEqual("Bad Request: ID must be a number");
       });
-    });
-  });
-
-  describe("GET /api", () => {
-    it("responds with status code of 200 upon successful retrieval", () => {
-      return request(app).get("/api").expect(200);
-    });
-    it("responds with endpoints.json file contents", () => {
-      return request(app)
-        .get("/api")
-        .expect(200)
-        .then((endpointsResponse) => {
-          expect(endpointsResponse.body).toEqual({ endpoints });
-        });
     });
   });
 });

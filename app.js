@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const {
-  getEndpoints: { getEndpoints },
   getTopics: { getTopics },
   getArticles: { getArticles },
   getArticleById: { getArticleById },
@@ -29,8 +28,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(express.json());
 
-app.get("/api", getEndpoints);
-
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getArticles);
@@ -51,7 +48,6 @@ app.use((err, req, res, next) => {
   res
     .status(err.status || 500)
     .send({ message: err.message || "Internal Server Error" });
-  next();
 });
 
 module.exports = app;
