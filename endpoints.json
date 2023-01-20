@@ -1,6 +1,6 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "serves a glossary of all available endpoints in api"
   },
   "GET /api/topics": {
     "description": "serves an array of all topics",
@@ -10,7 +10,7 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics, sorted by creation date in descending order by default (check queries)",
+    "description": "serves an array of all articles, sorted by creation date in descending order by default (check queries)",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
@@ -121,6 +121,10 @@
         }
       ]
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes comment with matching provided comment_id value, and all its data, serves a 204 No Content",
+    "queries": []
   },
   "GET /api/users": {
     "description": "serves an array of all users",
