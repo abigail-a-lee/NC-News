@@ -40,6 +40,7 @@ exports.getArticles = (req, res, next) => {
   selectArticles(queries)
     .then((articles) => {
       res.status(200).send({ articles });
+      return next();
     })
     .catch((err) => {
       err.status = 500;
@@ -65,6 +66,7 @@ exports.getArticleById = (req, res, next) => {
         return next(err);
       }
       res.status(200).send({ article });
+      return next();
     })
     .catch((err) => {
       err.status = 500;
@@ -109,6 +111,7 @@ exports.patchArticleById = (req, res, next) => {
         updateArticleById(id, newVote.inc_votes)
           .then((article) => {
             res.status(200).send({ article });
+            return next();
           })
           .catch((err) => {
             err.status = 500;

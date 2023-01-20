@@ -1,470 +1,476 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "paths": {
     "/api": {
       "get": {
         "summary": "/api",
-        "consumes": ["application/json"],
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "endpoints": {
+            "content": {
+              "application/json": {
+                "schema": {
                   "type": "object",
                   "properties": {
-                    "GET /api": {
+                    "endpoints": {
                       "type": "object",
                       "properties": {
-                        "description": {
-                          "type": "string",
-                          "example": "serves a glossary of all available endpoints in api"
-                        }
-                      }
-                    },
-                    "GET /api/topics": {
-                      "type": "object",
-                      "properties": {
-                        "description": {
-                          "type": "string",
-                          "example": "serves an array of all topics"
-                        },
-                        "queries": {
-                          "type": "array",
-                          "items": {},
-                          "example": [null]
-                        },
-                        "exampleResponse": {
+                        "GET /api": {
                           "type": "object",
                           "properties": {
-                            "topics": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "slug": {
-                                    "type": "string"
-                                  },
-                                  "description": {
-                                    "type": "string"
-                                  }
-                                }
-                              },
-                              "example": [
-                                {
-                                  "slug": "football",
-                                  "description": "Footie!"
-                                }
-                              ]
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "GET /api/articles": {
-                      "type": "object",
-                      "properties": {
-                        "description": {
-                          "type": "string",
-                          "example": "serves an array of all articles, sorted by creation date in descending order by default (check queries)"
-                        },
-                        "queries": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          },
-                          "example": ["author"]
-                        },
-                        "exampleResponse": {
-                          "type": "object",
-                          "properties": {
-                            "articles": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "article_id": {
-                                    "type": "number"
-                                  },
-                                  "title": {
-                                    "type": "string"
-                                  },
-                                  "topic": {
-                                    "type": "string"
-                                  },
-                                  "author": {
-                                    "type": "string"
-                                  },
-                                  "created_at": {
-                                    "type": "string"
-                                  },
-                                  "votes": {
-                                    "type": "number"
-                                  },
-                                  "article_img_url": {
-                                    "type": "string"
-                                  },
-                                  "comment_count": {
-                                    "type": "number"
-                                  }
-                                },
-                                "required": [
-                                  "article_id",
-                                  "title",
-                                  "topic",
-                                  "author",
-                                  "created_at",
-                                  "votes",
-                                  "article_img_url",
-                                  "comment_count"
-                                ]
-                              },
-                              "example": [
-                                {
-                                  "article_id": 2,
-                                  "title": "Seafood substitutions are increasing",
-                                  "topic": "cooking",
-                                  "author": "weegembump",
-                                  "created_at": "2020-11-03T09:12:00.000Z",
-                                  "votes": 1,
-                                  "article_img_url": "https://someURL.com/photos/1.jpg",
-                                  "comment_count": 5
-                                }
-                              ]
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "GET /api/articles/:article_id": {
-                      "type": "object",
-                      "properties": {
-                        "description": {
-                          "type": "string",
-                          "example": "serves an object of article with matching provided article_id (includes body)"
-                        },
-                        "queries": {
-                          "type": "array",
-                          "items": {},
-                          "example": [null]
-                        },
-                        "exampleResponse": {
-                          "type": "object",
-                          "properties": {
-                            "article": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "article_id": {
-                                    "type": "number"
-                                  },
-                                  "title": {
-                                    "type": "string"
-                                  },
-                                  "topic": {
-                                    "type": "string"
-                                  },
-                                  "author": {
-                                    "type": "string"
-                                  },
-                                  "body": {
-                                    "type": "string"
-                                  },
-                                  "created_at": {
-                                    "type": "string"
-                                  },
-                                  "votes": {
-                                    "type": "number"
-                                  },
-                                  "article_img_url": {
-                                    "type": "string"
-                                  },
-                                  "comment_count": {
-                                    "type": "number"
-                                  }
-                                }
-                              },
-                              "example": [
-                                {
-                                  "article_id": 2,
-                                  "title": "Seafood substitutions are increasing",
-                                  "topic": "cooking",
-                                  "author": "weegembump",
-                                  "body": "Text from the article..",
-                                  "created_at": "2020-11-03T09:12:00.000Z",
-                                  "votes": 1,
-                                  "article_img_url": "https://someURL.com/photos/1.jpg",
-                                  "comment_count": 5
-                                }
-                              ]
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "GET /api/articles/:article_id/comments": {
-                      "type": "object",
-                      "properties": {
-                        "description": {
-                          "type": "string",
-                          "example": "serves an array of comments with matching provided article_id sorted by creation date in descending order"
-                        },
-                        "queries": {
-                          "type": "array",
-                          "items": {},
-                          "example": [null]
-                        },
-                        "exampleResponse": {
-                          "type": "object",
-                          "properties": {
-                            "comments": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "comment_id": {
-                                    "type": "number"
-                                  },
-                                  "body": {
-                                    "type": "string"
-                                  },
-                                  "article_id": {
-                                    "type": "number"
-                                  },
-                                  "author": {
-                                    "type": "string"
-                                  },
-                                  "votes": {
-                                    "type": "number"
-                                  },
-                                  "created_at": {
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "comment_id",
-                                  "body",
-                                  "article_id",
-                                  "author",
-                                  "votes",
-                                  "created_at"
-                                ]
-                              },
-                              "example": [
-                                {
-                                  "comment_id": 5,
-                                  "body": "Very funny comment",
-                                  "article_id": 1,
-                                  "author": "veryfunnyposter",
-                                  "votes": 100,
-                                  "created_at": "2020-11-03T21:00:00.000Z"
-                                }
-                              ]
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "POST /api/articles/:article_id/comments": {
-                      "type": "object",
-                      "properties": {
-                        "description": {
-                          "type": "string",
-                          "example": "creates a new comment with provided id in parameters, provided username and body in request body, then serves the newly created comment"
-                        },
-                        "queries": {
-                          "type": "array",
-                          "items": {},
-                          "example": [null]
-                        },
-                        "exampleInput": {
-                          "type": "object",
-                          "properties": {
-                            "username": {
+                            "description": {
                               "type": "string",
-                              "example": "newUser"
+                              "example": "serves a glossary of all available endpoints in api"
+                            }
+                          }
+                        },
+                        "GET /api/topics": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                              "example": "serves an array of all topics"
                             },
-                            "body": {
+                            "queries": {
+                              "type": "array",
+                              "items": {},
+                              "example": [null]
+                            },
+                            "exampleResponse": {
+                              "type": "object",
+                              "properties": {
+                                "topics": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "slug": {
+                                        "type": "string"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "example": [
+                                    {
+                                      "slug": "football",
+                                      "description": "Footie!"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "GET /api/articles": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
                               "type": "string",
-                              "example": "Hey guys I'm new here"
-                            }
-                          }
-                        },
-                        "exampleResponse": {
-                          "type": "object",
-                          "properties": {
-                            "comment": {
+                              "example": "serves an array of all articles, sorted by creation date in descending order by default (check queries)"
+                            },
+                            "queries": {
                               "type": "array",
                               "items": {
-                                "type": "object",
-                                "properties": {
-                                  "comment_id": {
-                                    "type": "number"
-                                  },
-                                  "body": {
-                                    "type": "string"
-                                  },
-                                  "article_id": {
-                                    "type": "number"
-                                  },
-                                  "author": {
-                                    "type": "string"
-                                  },
-                                  "votes": {
-                                    "type": "number"
-                                  },
-                                  "created_at": {
-                                    "type": "string"
-                                  }
-                                }
+                                "type": "string"
                               },
-                              "example": [
-                                {
-                                  "comment_id": 52,
-                                  "body": "Hey guys I'm new here",
-                                  "article_id": 2,
-                                  "author": "newUser",
-                                  "votes": 0,
-                                  "created_at": "2022-11-03T21:00:00.000Z"
+                              "example": ["author"]
+                            },
+                            "exampleResponse": {
+                              "type": "object",
+                              "properties": {
+                                "articles": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "article_id": {
+                                        "type": "number"
+                                      },
+                                      "title": {
+                                        "type": "string"
+                                      },
+                                      "topic": {
+                                        "type": "string"
+                                      },
+                                      "author": {
+                                        "type": "string"
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "votes": {
+                                        "type": "number"
+                                      },
+                                      "article_img_url": {
+                                        "type": "string"
+                                      },
+                                      "comment_count": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "article_id",
+                                      "title",
+                                      "topic",
+                                      "author",
+                                      "created_at",
+                                      "votes",
+                                      "article_img_url",
+                                      "comment_count"
+                                    ]
+                                  },
+                                  "example": [
+                                    {
+                                      "article_id": 2,
+                                      "title": "Seafood substitutions are increasing",
+                                      "topic": "cooking",
+                                      "author": "weegembump",
+                                      "created_at": "2020-11-03T09:12:00.000Z",
+                                      "votes": 1,
+                                      "article_img_url": "https://someURL.com/photos/1.jpg",
+                                      "comment_count": 5
+                                    }
+                                  ]
                                 }
-                              ]
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "PATCH /api/articles/:article_id": {
-                      "type": "object",
-                      "properties": {
-                        "description": {
-                          "type": "string",
-                          "example": "increments vote count on article by provided amount and then serves the article with updated vote count"
-                        },
-                        "queries": {
-                          "type": "array",
-                          "items": {},
-                          "example": [null]
-                        },
-                        "exampleInput": {
-                          "type": "object",
-                          "properties": {
-                            "inc_votes": {
-                              "type": "number",
-                              "example": 1
+                              }
                             }
                           }
                         },
-                        "exampleResponse": {
+                        "GET /api/articles/:article_id": {
                           "type": "object",
                           "properties": {
-                            "comment": {
+                            "description": {
+                              "type": "string",
+                              "example": "serves an object of article with matching provided article_id (includes body)"
+                            },
+                            "queries": {
                               "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "article_id": {
-                                    "type": "number"
+                              "items": {},
+                              "example": [null]
+                            },
+                            "exampleResponse": {
+                              "type": "object",
+                              "properties": {
+                                "article": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "article_id": {
+                                        "type": "number"
+                                      },
+                                      "title": {
+                                        "type": "string"
+                                      },
+                                      "topic": {
+                                        "type": "string"
+                                      },
+                                      "author": {
+                                        "type": "string"
+                                      },
+                                      "body": {
+                                        "type": "string"
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "votes": {
+                                        "type": "number"
+                                      },
+                                      "article_img_url": {
+                                        "type": "string"
+                                      },
+                                      "comment_count": {
+                                        "type": "number"
+                                      }
+                                    }
                                   },
-                                  "title": {
-                                    "type": "string"
-                                  },
-                                  "topic": {
-                                    "type": "string"
-                                  },
-                                  "author": {
-                                    "type": "string"
-                                  },
-                                  "body": {
-                                    "type": "string"
-                                  },
-                                  "created_at": {
-                                    "type": "string"
-                                  },
-                                  "votes": {
-                                    "type": "number"
-                                  },
-                                  "article_img_url": {
-                                    "type": "string"
-                                  },
-                                  "comment_count": {
-                                    "type": "number"
-                                  }
+                                  "example": [
+                                    {
+                                      "article_id": 2,
+                                      "title": "Seafood substitutions are increasing",
+                                      "topic": "cooking",
+                                      "author": "weegembump",
+                                      "body": "Text from the article..",
+                                      "created_at": "2020-11-03T09:12:00.000Z",
+                                      "votes": 1,
+                                      "article_img_url": "https://someURL.com/photos/1.jpg",
+                                      "comment_count": 5
+                                    }
+                                  ]
                                 }
-                              },
-                              "example": [
-                                {
-                                  "article_id": 2,
-                                  "title": "Seafood substitutions are increasing",
-                                  "topic": "cooking",
-                                  "author": "weegembump",
-                                  "body": "Text from the article..",
-                                  "created_at": "2020-11-03T09:12:00.000Z",
-                                  "votes": 2,
-                                  "article_img_url": "https://someURL.com/photos/1.jpg",
-                                  "comment_count": 5
-                                }
-                              ]
+                              }
                             }
                           }
-                        }
-                      }
-                    },
-                    "DELETE /api/comments/:comment_id": {
-                      "type": "object",
-                      "properties": {
-                        "description": {
-                          "type": "string",
-                          "example": "deletes comment with matching provided comment_id value, and all its data, serves a 204 No Content"
                         },
-                        "queries": {
-                          "type": "array",
-                          "items": {},
-                          "example": [null]
-                        }
-                      }
-                    },
-                    "GET /api/users": {
-                      "type": "object",
-                      "properties": {
-                        "description": {
-                          "type": "string",
-                          "example": "serves an array of all users"
-                        },
-                        "queries": {
-                          "type": "array",
-                          "items": {},
-                          "example": [null]
-                        },
-                        "exampleResponse": {
+                        "GET /api/articles/:article_id/comments": {
                           "type": "object",
                           "properties": {
-                            "users": {
+                            "description": {
+                              "type": "string",
+                              "example": "serves an array of comments with matching provided article_id sorted by creation date in descending order"
+                            },
+                            "queries": {
                               "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "username": {
-                                    "type": "string"
+                              "items": {},
+                              "example": [null]
+                            },
+                            "exampleResponse": {
+                              "type": "object",
+                              "properties": {
+                                "comments": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "comment_id": {
+                                        "type": "number"
+                                      },
+                                      "body": {
+                                        "type": "string"
+                                      },
+                                      "article_id": {
+                                        "type": "number"
+                                      },
+                                      "author": {
+                                        "type": "string"
+                                      },
+                                      "votes": {
+                                        "type": "number"
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "comment_id",
+                                      "body",
+                                      "article_id",
+                                      "author",
+                                      "votes",
+                                      "created_at"
+                                    ]
                                   },
-                                  "name": {
-                                    "type": "string"
-                                  },
-                                  "avatar_url": {
-                                    "type": "string"
-                                  }
+                                  "example": [
+                                    {
+                                      "comment_id": 5,
+                                      "body": "Very funny comment",
+                                      "article_id": 1,
+                                      "author": "veryfunnyposter",
+                                      "votes": 100,
+                                      "created_at": "2020-11-03T21:00:00.000Z"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "POST /api/articles/:article_id/comments": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                              "example": "creates a new comment with provided id in parameters, provided username and body in request body, then serves the newly created comment"
+                            },
+                            "queries": {
+                              "type": "array",
+                              "items": {},
+                              "example": [null]
+                            },
+                            "exampleInput": {
+                              "type": "object",
+                              "properties": {
+                                "username": {
+                                  "type": "string",
+                                  "example": "newUser"
                                 },
-                                "required": ["username", "name", "avatar_url"]
-                              },
-                              "example": [
-                                {
-                                  "username": "cool_username",
-                                  "name": "ted",
-                                  "avatar_url": "https:/someURL.com/photos/1.jpg"
+                                "body": {
+                                  "type": "string",
+                                  "example": "Hey guys I'm new here"
                                 }
-                              ]
+                              }
+                            },
+                            "exampleResponse": {
+                              "type": "object",
+                              "properties": {
+                                "comment": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "comment_id": {
+                                        "type": "number"
+                                      },
+                                      "body": {
+                                        "type": "string"
+                                      },
+                                      "article_id": {
+                                        "type": "number"
+                                      },
+                                      "author": {
+                                        "type": "string"
+                                      },
+                                      "votes": {
+                                        "type": "number"
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "example": [
+                                    {
+                                      "comment_id": 52,
+                                      "body": "Hey guys I'm new here",
+                                      "article_id": 2,
+                                      "author": "newUser",
+                                      "votes": 0,
+                                      "created_at": "2022-11-03T21:00:00.000Z"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "PATCH /api/articles/:article_id": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                              "example": "increments vote count on article by provided amount and then serves the article with updated vote count"
+                            },
+                            "queries": {
+                              "type": "array",
+                              "items": {},
+                              "example": [null]
+                            },
+                            "exampleInput": {
+                              "type": "object",
+                              "properties": {
+                                "inc_votes": {
+                                  "type": "number",
+                                  "example": 1
+                                }
+                              }
+                            },
+                            "exampleResponse": {
+                              "type": "object",
+                              "properties": {
+                                "comment": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "article_id": {
+                                        "type": "number"
+                                      },
+                                      "title": {
+                                        "type": "string"
+                                      },
+                                      "topic": {
+                                        "type": "string"
+                                      },
+                                      "author": {
+                                        "type": "string"
+                                      },
+                                      "body": {
+                                        "type": "string"
+                                      },
+                                      "created_at": {
+                                        "type": "string"
+                                      },
+                                      "votes": {
+                                        "type": "number"
+                                      },
+                                      "article_img_url": {
+                                        "type": "string"
+                                      },
+                                      "comment_count": {
+                                        "type": "number"
+                                      }
+                                    }
+                                  },
+                                  "example": [
+                                    {
+                                      "article_id": 2,
+                                      "title": "Seafood substitutions are increasing",
+                                      "topic": "cooking",
+                                      "author": "weegembump",
+                                      "body": "Text from the article..",
+                                      "created_at": "2020-11-03T09:12:00.000Z",
+                                      "votes": 2,
+                                      "article_img_url": "https://someURL.com/photos/1.jpg",
+                                      "comment_count": 5
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "DELETE /api/comments/:comment_id": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                              "example": "deletes comment with matching provided comment_id value, and all its data, serves a 204 No Content"
+                            },
+                            "queries": {
+                              "type": "array",
+                              "items": {},
+                              "example": [null]
+                            }
+                          }
+                        },
+                        "GET /api/users": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                              "example": "serves an array of all users"
+                            },
+                            "queries": {
+                              "type": "array",
+                              "items": {},
+                              "example": [null]
+                            },
+                            "exampleResponse": {
+                              "type": "object",
+                              "properties": {
+                                "users": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "username": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "avatar_url": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "username",
+                                      "name",
+                                      "avatar_url"
+                                    ]
+                                  },
+                                  "example": [
+                                    {
+                                      "username": "cool_username",
+                                      "name": "ted",
+                                      "avatar_url": "https:/someURL.com/photos/1.jpg"
+                                    }
+                                  ]
+                                }
+                              }
                             }
                           }
                         }
@@ -476,15 +482,12 @@
             }
           }
         },
-        "tags": [],
-        "produces": ["application/json"]
+        "tags": []
       }
     },
     "/api/topics": {
       "get": {
         "summary": "/api/topics",
-        "consumes": ["application/json"],
-        "parameters": [],
         "responses": {},
         "tags": []
       }
@@ -492,95 +495,760 @@
     "/api/articles": {
       "get": {
         "summary": "/api/articles",
-        "consumes": ["application/json"],
-        "parameters": [],
-        "responses": {},
+        "parameters": [
+          {
+            "name": "topic",
+            "in": "query",
+            "example": "mitch",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "author",
+            "in": "query",
+            "example": "icellusedkars",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "example": "title",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "example": "asc",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "articles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "article_id": {
+                            "type": "number"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "topic": {
+                            "type": "string"
+                          },
+                          "author": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "votes": {
+                            "type": "number"
+                          },
+                          "article_img_url": {
+                            "type": "string"
+                          },
+                          "comment_count": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "article_id",
+                          "title",
+                          "topic",
+                          "author",
+                          "created_at",
+                          "votes",
+                          "article_img_url",
+                          "comment_count"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "article_id": 3,
+                          "title": "Eight pug gifs that remind me of mitch",
+                          "topic": "mitch",
+                          "author": "icellusedkars",
+                          "created_at": "2020-11-03T09:12:00.000Z",
+                          "votes": 0,
+                          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                          "comment_count": 2
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid sort category"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
     "/api/articles/{article_id}": {
       "get": {
         "summary": "/api/articles/{article_id}",
-        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "article_id",
             "in": "path",
-            "required": true
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "article": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "article_id": {
+                            "type": "number"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "topic": {
+                            "type": "string"
+                          },
+                          "author": {
+                            "type": "string"
+                          },
+                          "body": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "votes": {
+                            "type": "number"
+                          },
+                          "article_img_url": {
+                            "type": "string"
+                          },
+                          "comment_count": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "article_id": 1,
+                          "title": "Living in the shadow of a great man",
+                          "topic": "mitch",
+                          "author": "butter_bridge",
+                          "body": "I find this existence challenging",
+                          "created_at": "2020-07-09T20:11:00.000Z",
+                          "votes": 100,
+                          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                          "comment_count": 11
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request: ID must be a number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Article not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       },
       "patch": {
         "summary": "/api/articles/{article_id}",
-        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "article_id",
             "in": "path",
-            "required": true
+            "required": true,
+            "example": "1/",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
-        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "inc_votes": {
+                    "type": "number",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "article": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "article_id": {
+                            "type": "number"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "topic": {
+                            "type": "string"
+                          },
+                          "author": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "votes": {
+                            "type": "number"
+                          },
+                          "article_img_url": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "article_id": 1,
+                          "title": "Living in the shadow of a great man",
+                          "topic": "mitch",
+                          "author": "butter_bridge",
+                          "created_at": "2020-07-09T20:11:00.000Z",
+                          "votes": 101,
+                          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request: ID must be a number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Cannot edit votes of article that does not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
     "/api/articles/{article_id}/comments": {
       "get": {
         "summary": "/api/articles/{article_id}/comments",
-        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "article_id",
             "in": "path",
-            "required": true
+            "required": true,
+            "example": 9,
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "comments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "number"
+                          },
+                          "body": {
+                            "type": "string"
+                          },
+                          "article_id": {
+                            "type": "number"
+                          },
+                          "author": {
+                            "type": "string"
+                          },
+                          "votes": {
+                            "type": "number"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "comment_id",
+                          "body",
+                          "article_id",
+                          "author",
+                          "votes",
+                          "created_at"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "comment_id": 5,
+                          "body": "I hate streaming noses",
+                          "article_id": 1,
+                          "author": "icellusedkars",
+                          "votes": 0,
+                          "created_at": "2020-11-03T21:00:00.000Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request: ID must be a number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "No comments found with matching article ID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       },
       "post": {
         "summary": "/api/articles/{article_id}/comments",
-        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "article_id",
             "in": "path",
-            "required": true
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
-        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "lurker"
+                  },
+                  "body": {
+                    "type": "string",
+                    "example": "I am not crazy! I know he swapped those numbers! I knew it was 1216. One after Magna Carta. As if I could ever make such a mistake. Never. Never! I just - I just couldn't prove it. He - he covered his tracks, he got that idiot at the copy shop to lie for him. You think this is something? You think this is bad? This? This chicanery? He's done worse. That billboard! Are you telling me that a man just happens to fall like that? No! He orchestrated it! Jimmy! He defecated through a sunroof! And I saved him! And I shouldn't have. I took him into my own firm! What was I thinking? He'll never change. He'll never change! Ever since he was 9, always the same! Couldn't keep his hands out of the cash drawer! But not our Jimmy! Couldn't be precious Jimmy! Stealing them blind! And he gets to be a lawyer!? What a sick joke! I should've stopped him when I had the chance! And you - you have to stop him! You-"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "comment": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "comment_id": {
+                            "type": "number"
+                          },
+                          "body": {
+                            "type": "string"
+                          },
+                          "article_id": {
+                            "type": "number"
+                          },
+                          "author": {
+                            "type": "string"
+                          },
+                          "votes": {
+                            "type": "number"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "comment_id": 19,
+                          "body": "I am not crazy! I know he swapped those numbers! I knew it was 1216. One after Magna Carta. As if I could ever make such a mistake. Never. Never! I just - I just couldn't prove it. He - he covered his tracks, he got that idiot at the copy shop to lie for him. You think this is something? You think this is bad? This? This chicanery? He's done worse. That billboard! Are you telling me that a man just happens to fall like that? No! He orchestrated it! Jimmy! He defecated through a sunroof! And I saved him! And I shouldn't have. I took him into my own firm! What was I thinking? He'll never change. He'll never change! Ever since he was 9, always the same! Couldn't keep his hands out of the cash drawer! But not our Jimmy! Couldn't be precious Jimmy! Stealing them blind! And he gets to be a lawyer!? What a sick joke! I should've stopped him when I had the chance! And you - you have to stop him! You-",
+                          "article_id": 1,
+                          "author": "lurker",
+                          "votes": 0,
+                          "created_at": "2023-01-20T21:24:28.826Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request: ID must be a number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Cannot post comment to article that does not exist"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
     "/api/users": {
       "get": {
         "summary": "/api/users",
-        "consumes": ["application/json"],
-        "parameters": [],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "username": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "avatar_url": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["username", "name", "avatar_url"]
+                      },
+                      "example": [
+                        {
+                          "username": "butter_bridge",
+                          "name": "jonny",
+                          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal Server Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
     "/api/comments/{comment_id}": {
       "delete": {
         "summary": "/api/comments/{comment_id}",
-        "consumes": ["application/json"],
         "parameters": [
           {
             "name": "comment_id",
             "in": "path",
-            "required": true
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
-        "responses": {},
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request: ID must be a number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Cannot delete comment that does not exist"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     }
   },
   "tags": [],
-  "definitions": {},
   "info": {
     "title": "al-nc-news",
     "version": "1.0.0",
@@ -588,5 +1256,10 @@
       "name": "ISC"
     },
     "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3).\n\nnc-news API"
-  }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:40069"
+    }
+  ]
 }

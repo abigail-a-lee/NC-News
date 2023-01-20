@@ -12,16 +12,15 @@ const {
   deleteCommentById: { deleteCommentById },
 } = require("./controllers");
 
-const expressOasGenerator = require("express-oas-generator");
+/* const expressOasGenerator = require("express-oas-generator");
 expressOasGenerator.init(
   app,
   function (spec) {
     return spec;
   },
   "./swagger_generate.json",
-  60 * 1000,
-  "api-docs"
-);
+  60 * 1000
+); */
 
 const swaggerUi = require("swagger-ui-express"),
   swaggerDocument = require("./swagger.json");
@@ -52,6 +51,7 @@ app.use((err, req, res, next) => {
   res
     .status(err.status || 500)
     .send({ message: err.message || "Internal Server Error" });
+  next();
 });
 
 module.exports = app;

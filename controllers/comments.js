@@ -23,6 +23,7 @@ exports.getCommentsById = (req, res, next) => {
         return next(err);
       }
       res.status(200).send({ comments });
+      return next();
     })
     .catch((err) => {
       err.status = 500;
@@ -67,6 +68,7 @@ exports.postComment = (req, res, next) => {
         insertComment(id, newComment)
           .then((comment) => {
             res.status(201).send({ comment });
+            return next();
           })
           .catch((err) => {
             err.status = 500;
@@ -98,6 +100,7 @@ exports.deleteCommentById = (req, res, next) => {
         return next(err);
       }
       res.status(204).send();
+      return next();
     })
     .catch((err) => {
       err.status = 500;
