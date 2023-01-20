@@ -5,3 +5,4 @@ exports.selectCommentsById = require("./comments");
 exports.insertComment = require("./comments");
 exports.updateArticleById = require("./articles");
 exports.selectUsers = require("./users");
+exports.removeCommentById = require("./comments");

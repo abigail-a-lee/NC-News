@@ -1,7 +1,4 @@
 const db = require("../db/connection");
-const {
-  selectArticleById: { selectArticleById },
-} = require("./index");
 
 exports.selectCommentsById = (id) => {
   const findQuery = `SELECT * FROM comments `;
@@ -36,6 +33,25 @@ exports.insertComment = (id, newComment) => {
         resolve(result.rows);
       })
       .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
+exports.removeCommentById = (id) => {
+  const deleteQuery = `
+  DELETE FROM comments 
+  WHERE comment_id = $1
+  RETURNING *
+  `;
+
+  return new Promise((resolve, reject) => {
+    db.query(deleteQuery, [id])
+      .then((result) => {
+        resolve(result.rows);
+      })
+      .catch((err) => {
+        console.log("database error");
         reject(err);
       });
   });

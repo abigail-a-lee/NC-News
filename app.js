@@ -8,6 +8,7 @@ const {
   postComment: { postComment },
   patchArticleById: { patchArticleById },
   getUsers: { getUsers },
+  deleteCommentById: { deleteCommentById },
 } = require("./controllers");
 
 app.use(express.json());
@@ -25,6 +26,8 @@ app.get("/api/users", getUsers);
 app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", patchArticleById);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.use((err, req, res, next) => {
   res

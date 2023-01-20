@@ -757,10 +757,10 @@ describe("app", () => {
   });
 
   describe("GET /api/articles endpoint (now with queries!)", () => {
-    it("should be able to accept a 'topic' filter as a query", () => {
+    it("handles a 'topic' filter as a query", () => {
       return request(app).get("/api/articles?topic=mitch").expect(200);
     });
-    it("should only return matching topic articles when using topic filter", () => {
+    it("only returns matching topic articles when using topic filter", () => {
       return request(app)
         .get("/api/articles?topic=mitch")
         .expect(200)
@@ -772,10 +772,10 @@ describe("app", () => {
             });
         });
     });
-    it("should be able to accept an 'author' filter as a query", () => {
+    it("handles an 'author' filter as a query", () => {
       return request(app).get("/api/articles?author=icellusedkars").expect(200);
     });
-    it("should only return matching author articles when using author filter", () => {
+    it("only returns matching author articles when using author filter", () => {
       return request(app)
         .get("/api/articles?author=icellusedkars")
         .expect(200)
@@ -787,7 +787,7 @@ describe("app", () => {
             });
         });
     });
-    it("should be able to handle both filters simultaneously and return a correctly double filtered result!", () => {
+    it("handles both filters simultaneously and returns a correctly double filtered result!", () => {
       return request(app)
         .get("/api/articles?author=rogersop&topic=cats")
         .expect(200)
@@ -800,7 +800,7 @@ describe("app", () => {
             });
         });
     });
-    it("should have a 'sort_by' query that sorts articles by any valid column", () => {
+    it("handles a 'sort_by' query that sorts articles by any valid column", () => {
       return request(app)
         .get("/api/articles?sort_by=title")
         .expect(200)
@@ -809,7 +809,7 @@ describe("app", () => {
           expect(articles).toBeSortedBy("title", { descending: true });
         });
     });
-    it("should return an error if invalid column is passed through", () => {
+    it("responds with an error code of 400 and appropriate message if invalid column is passed through", () => {
       return request(app)
         .get("/api/articles?sort_by=pizza")
         .expect(400)
@@ -817,7 +817,7 @@ describe("app", () => {
           expect(res.body.message).toBe("Invalid sort category");
         });
     });
-    it("should have an 'order' query that allows to sort articles by either ascending or descending", () => {
+    it("handles an 'order' query that allows to sort articles by either ascending or descending", () => {
       return request(app)
         .get("/api/articles?order=asc")
         .expect(200)
@@ -826,7 +826,7 @@ describe("app", () => {
           expect(articles).toBeSortedBy("created_at", { ascending: true });
         });
     });
-    it("should return an error if invalid order is passed through", () => {
+    it("responds with an error code of 400 and appropriate message if invalid order is passed through", () => {
       return request(app)
         .get("/api/articles?order=pizza")
         .expect(400)
@@ -836,7 +836,7 @@ describe("app", () => {
           );
         });
     });
-    it("should allow simultaneous 'sort_by' and 'order_by' queries", () => {
+    it("allows simultaneous 'sort_by' and 'order_by' queries", () => {
       return request(app)
         .get("/api/articles?sort_by=title&order=asc")
         .expect(200)
@@ -845,7 +845,7 @@ describe("app", () => {
           expect(articles).toBeSortedBy("title", { ascending: true });
         });
     });
-    it("should allow simultaneous use of all queries (chaos ensues)", () => {
+    it("allows simultaneous use of all queries (chaos ensues)", () => {
       return request(app)
         .get(
           "/api/articles?sort_by=article_id&order=asc&author=icellusedkars&topic=mitch"
@@ -864,7 +864,7 @@ describe("app", () => {
   });
 
   describe("GET /api/articles/:article_id (now with comment count!)", () => {
-    it("should return a comment_count property", () => {
+    it("responds with a comment_count property", () => {
       return request(app)
         .get("/api/articles/1")
         .then((res) => {
@@ -872,13 +872,59 @@ describe("app", () => {
           expect(article[0]).toHaveProperty("comment_count");
         });
     });
-    it("should return correct comment count", () => {
+    it("responds with the correct comment count", () => {
       return request(app)
         .get("/api/articles/1")
         .then((res) => {
           let article = res.body.article;
           expect(article[0].comment_count).toBe(11);
         });
+    });
+  });
+  describe("DELETE /api/comments/:comment_id endpoint", () => {
+    it("responds with a status 204 no content on successful deletion", () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+    it("actually actually delete the comment", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(() => {
+          return request(app)
+            .get("/api/articles/9/comments")
+            .expect(200)
+            .then((res) => {
+              const comments = res.body.comments;
+              expect(comments.length).toBeGreaterThan(0),
+                comments.forEach((comment) => {
+                  expect(comment.comment_id).not.toBe(1);
+                });
+            });
+        });
+    });
+    it("responds with an error code of 404 and appropriate error message if no comment is found with provided comment_id", () => {
+      return request(app)
+        .delete("/api/comments/99")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.message).toBe(
+            "Cannot delete comment that does not exist"
+          );
+        });
+    });
+
+    it("responds with an error code of 400 and appropriate error message if the id passed in is invalid", () => {
+      return Promise.all([
+        request(app).delete("/api/comments/example").expect(400),
+        request(app).delete("/api/comments/example1").expect(400),
+        request(app).delete("/api/comments/[]").expect(400),
+        request(app).delete("/api/comments/{}").expect(400),
+      ]).then(([res1, res2, res3, res4]) => {
+        expect(res1.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res2.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res3.body.message).toEqual("Bad Request: ID must be a number");
+        expect(res4.body.message).toEqual("Bad Request: ID must be a number");
+      });
     });
   });
 });
