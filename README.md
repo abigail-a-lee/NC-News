@@ -62,9 +62,53 @@ For more specific information, please see `endpoints.json` or use the `GET /api`
 
 ---
 
-## **Setup instructions**
+## **Hosted version**
 
-### **1.** Create environment variable files `.env.test` and `.env.development` in the root directory with the following information:
+### **You can try a live production version of this app, hosted with Render, by [clicking here](https://abi-nc-news.onrender.com/api).**
+
+---
+
+## **Setup**
+
+### **Requirements**
+
+- **Node.js**: 19.0.0 or later
+- **PostgreSQL**: 12.12 or later
+
+### **Cloning repository**
+
+Using shell, create a directory where you would like to store the project, then change directory to it. _(Optional)_
+
+```bash
+$ mkdir project_folder
+$ cd project_folder
+```
+
+Clone with:
+
+```bash
+$ git clone https://github.com/abigail-a-lee/NC-News
+```
+
+And finally, ensure you are in the correct directory by running:
+
+```bash
+$ cd NC-News
+```
+
+### **Installing dependencies**
+
+To install dependencies, simply run the command:
+
+```bash
+$ npm install
+```
+
+### **Creating Development/Test environment files**
+
+Creation of `.env` files in the project root directory is required to use this project.
+
+The contents must be as follows:
 
 **.env.development:**
 
@@ -78,10 +122,51 @@ PGDATABASE=nc_news
 PGDATABASE=nc_news_test
 ```
 
+### **Database creation/seeding**
+
+Run the following script in the root directory to create the development and test databases:
+
+```bash
+$ npm run setup-dbs
+```
+
+Then run:
+
+```bash
+$ npm run seed
+```
+
+To seed the databases with data.
+
+### **Tests**
+
+You can test that everything has been setup and is working correctly by using the command
+
+```bash
+$ npm test
+```
+
 ---
 
-## **Hosted version**
+## **Dependencies**
 
-Live production version of this app is available here:
+This project requires the following Node.JS packages:
 
-https://abi-nc-news.onrender.com/api
+### **Production dependencies**
+
+| **Package** | **Version** | **Usage**                                             |
+| ----------- | ----------- | ----------------------------------------------------- |
+| dotenv      | ^16.0.0     | _Handles environment variable files_                  |
+| express     | ^4.18.2     | _Routes API requests_                                 |
+| pg          | ^8.7.3      | _Queries postgreSQL database_                         |
+| pg-format   | ^1.0.4      | _Formats postgreSQL queries to prevent SQL injection_ |
+
+### **Developer dependencies**
+
+| **Package**   | **Version** | **Usage**                                             |
+| ------------- | ----------- | ----------------------------------------------------- |
+| husky         | ^8.0.2      | _Validates commit by running tests before committing_ |
+| jest          | ^27.5.1     | _Provides framework for testing functionality_        |
+| jest-extended | ^2.0.0      | _Adds additional jest testing identifiers_            |
+| jest-sorted   | ^1.0.14     | _Adds sort testing for jest_                          |
+| supertest     | ^6.3.3      | _Adds simplified web request testing_                 |
