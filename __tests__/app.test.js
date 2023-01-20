@@ -766,9 +766,10 @@ describe("app", () => {
         .expect(200)
         .then((res) => {
           const articles = res.body.articles;
-          articles.forEach((article) => {
-            expect(article.topic).toBe("mitch");
-          });
+          expect(articles.length).toBeGreaterThan(0),
+            articles.forEach((article) => {
+              expect(article.topic).toBe("mitch");
+            });
         });
     });
     it("handles an 'author' filter as a query", () => {
@@ -780,9 +781,10 @@ describe("app", () => {
         .expect(200)
         .then((res) => {
           const articles = res.body.articles;
-          articles.forEach((article) => {
-            expect(article.author).toBe("icellusedkars");
-          });
+          expect(articles.length).toBeGreaterThan(0),
+            articles.forEach((article) => {
+              expect(article.author).toBe("icellusedkars");
+            });
         });
     });
     it("handles both filters simultaneously and returns a correctly double filtered result!", () => {
@@ -791,10 +793,11 @@ describe("app", () => {
         .expect(200)
         .then((res) => {
           const articles = res.body.articles;
-          articles.forEach((article) => {
-            expect(article.author).toBe("rogersop"),
-              expect(article.topic).toBe("cats");
-          });
+          expect(articles.length).toBeGreaterThan(0),
+            articles.forEach((article) => {
+              expect(article.author).toBe("rogersop"),
+                expect(article.topic).toBe("cats");
+            });
         });
     });
     it("handles a 'sort_by' query that sorts articles by any valid column", () => {
@@ -851,6 +854,7 @@ describe("app", () => {
         .then((res) => {
           const articles = res.body.articles;
           expect(articles).toBeSortedBy("article_id", { ascending: true }),
+            expect(articles.length).toBeGreaterThan(0),
             articles.forEach((article) => {
               expect(article.author).toBe("icellusedkars"),
                 expect(article.topic).toBe("mitch");
