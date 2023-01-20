@@ -12,6 +12,17 @@ const {
   deleteCommentById: { deleteCommentById },
 } = require("./controllers");
 
+const expressOasGenerator = require("express-oas-generator");
+expressOasGenerator.init(
+  app,
+  function (spec) {
+    return spec;
+  },
+  "./swagger_generate.json",
+  60 * 1000,
+  "api-docs"
+);
+
 const swaggerUi = require("swagger-ui-express"),
   swaggerDocument = require("./swagger.json");
 
