@@ -9,6 +9,7 @@ exports.getArticles = (req, res, next) => {
   const queries = {};
   queries.sortColumn = req.query.sort_by ? req.query.sort_by : "created_at";
   queries.sortOrder = req.query.order ? req.query.order : "DESC";
+  queries.page = req.query.p ? req.query.p : "1";
   queries.topic = req.query.topic;
   queries.author = req.query.author;
 
@@ -29,6 +30,13 @@ exports.getArticles = (req, res, next) => {
     err.status = 400;
     return next(err);
   }
+
+  if (parseInt(queries.page) === NaN) {
+    const err = new Error("Page must be a number");
+    err.status = 400;
+    return next(err);
+  }
+
   if (!["ASC", "DESC"].includes(queries.sortOrder.toUpperCase())) {
     const err = new Error("Invalid sort order (must be 'asc' or 'desc')");
     err.status = 400;

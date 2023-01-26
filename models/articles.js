@@ -3,14 +3,16 @@ const format = require("pg-format");
 
 exports.selectArticles = (queries) => {
   const findQuery = `
-  SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url,
+  SELECT articles.*
   COUNT(comments.article_id)::integer as comment_count
   FROM articles
   LEFT JOIN comments ON articles.article_id = comments.article_id
   WHERE (articles.topic = %L OR %L IS NULL)
   AND (articles.author = %L OR %L IS NULL)
-  GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url
+  GROUP BY articles.*
   ORDER BY %I %s;
+  LIMIT 10
+  OFFSET (%L - 1) * 5;
 `;
 
   const formattedQuery = format(
@@ -20,7 +22,8 @@ exports.selectArticles = (queries) => {
     queries.author,
     queries.author,
     queries.sortColumn,
-    queries.sortOrder
+    queries.sortOrder,
+    queries.page
   );
 
   return new Promise((resolve, reject) => {
