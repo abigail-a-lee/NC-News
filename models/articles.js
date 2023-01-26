@@ -3,13 +3,13 @@ const format = require("pg-format");
 
 exports.selectArticles = (queries) => {
   const findQuery = `
-  SELECT articles.*
+  SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, articles.body, 
   COUNT(comments.article_id)::integer as comment_count
   FROM articles
   LEFT JOIN comments ON articles.article_id = comments.article_id
   WHERE (articles.topic = %L OR %L IS NULL)
   AND (articles.author = %L OR %L IS NULL)
-  GROUP BY articles.*
+  GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, articles.body
   ORDER BY %I %s
   LIMIT 10
   OFFSET (%I - 1) * 5;
