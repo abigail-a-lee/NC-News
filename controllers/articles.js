@@ -47,7 +47,7 @@ exports.getArticles = (req, res, next) => {
 
   selectArticles(queries)
     .then((articles) => {
-      res.status(200).send({ articles });
+      res.status(200).send({ articles, page: queries.page });
       return next();
     })
     .catch((err) => {
