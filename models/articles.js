@@ -12,7 +12,7 @@ exports.selectArticles = (queries) => {
   GROUP BY articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, articles.body
   ORDER BY %I %s
   LIMIT 10
-  OFFSET (%I - 1) * 5;
+  OFFSET (%s - 1) * 5;
 `;
 
   const formattedQuery = format(
