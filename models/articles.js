@@ -10,7 +10,7 @@ exports.selectArticles = (queries) => {
   WHERE (articles.topic = %L OR %L IS NULL)
   AND (articles.author = %L OR %L IS NULL)
   GROUP BY articles.*
-  ORDER BY %I %s;
+  ORDER BY %I %s
   LIMIT 10
   OFFSET (%I - 1) * 5;
 `;
