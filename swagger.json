@@ -44,6 +44,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "p",
+            "in": "query",
+            "example": "1",
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
